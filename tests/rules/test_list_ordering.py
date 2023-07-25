@@ -70,6 +70,14 @@ class ListOrderingTestCase(RuleTestCase):
                    '- ab\n', conf,
                    problem=(4, 3))
 
+    def test_word_length_flow(self):
+        conf = 'list-ordering: enable'
+        self.check('---\n'
+                   '[a, ab, abc]\n', conf)
+        self.check('---\n'
+                   '[a, abc, ab]\n', conf,
+                   problem=(2, 10))
+
     def test_case(self):
         conf = 'list-ordering: enable'
         self.check('---\n'
@@ -84,6 +92,14 @@ class ListOrderingTestCase(RuleTestCase):
                    '- t-shirts\n', conf,
                    problem=(4, 3))
 
+    def test_case_flow(self):
+        conf = 'list-ordering: enable'
+        self.check('---\n'
+                   '[T-shirt, T-shirts, t-shirt, t-shirts]\n', conf)
+        self.check('---\n'
+                   '[T-shirt, t-shirt, T-shirts, t-shirts]\n', conf,
+                   problem=(2, 20))
+
     def test_accents(self):
         conf = 'list-ordering: enable'
         self.check('---\n'
@@ -95,6 +111,14 @@ class ListOrderingTestCase(RuleTestCase):
                    '- haïr\n'
                    '- hais\n', conf,
                    problem=(3, 3))
+
+    def test_accents_flow(self):
+        conf = 'list-ordering: enable'
+        self.check('---\n'
+                   '[hair, hais, haïr, haïssable]\n', conf)
+        self.check('---\n'
+                   '[haïr, hais]\n', conf,
+                   problem=(2, 8))
 
     def test_locale_case(self):
         self.addCleanup(locale.setlocale, locale.LC_ALL, (None, None))
@@ -115,6 +139,19 @@ class ListOrderingTestCase(RuleTestCase):
                    '- T-shirts\n', conf,
                    problem=(4, 3))
 
+    def test_locale_case_flow(self):
+        self.addCleanup(locale.setlocale, locale.LC_ALL, (None, None))
+        try:
+            locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+        except locale.Error:  # pragma: no cover
+            self.skipTest('locale en_US.UTF-8 not available')
+        conf = ('list-ordering: enable')
+        self.check('---\n'
+                   '[t-shirt, T-shirt, t-shirts, T-shirts]\n', conf)
+        self.check('---\n'
+                   '[t-shirt, t-shirts, T-shirt, T-shirts]\n', conf,
+                   problem=(2, 21))
+
     def test_locale_accents(self):
         self.addCleanup(locale.setlocale, locale.LC_ALL, (None, None))
         try:
@@ -132,6 +169,19 @@ class ListOrderingTestCase(RuleTestCase):
                    '- haïr\n', conf,
                    problem=(3, 3))
 
+    def test_locale_accents_flow(self):
+        self.addCleanup(locale.setlocale, locale.LC_ALL, (None, None))
+        try:
+            locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+        except locale.Error:  # pragma: no cover
+            self.skipTest('locale en_US.UTF-8 not available')
+        conf = ('list-ordering: enable')
+        self.check('---\n'
+                   '[hair, haïr, hais, haïssable]\n', conf)
+        self.check('---\n'
+                   '[hais, haïr]\n', conf,
+                   problem=(2, 8))
+
     def test_heterogeneous_items(self):
         conf = 'list-ordering: enable'
         self.check('---\n'
@@ -145,3 +195,11 @@ class ListOrderingTestCase(RuleTestCase):
                    '- abc\n'
                    '- true\n', conf,
                    problem=(4, 3))
+
+    def test_heterogeneous_items_flow(self):
+        conf = 'list-ordering: enable'
+        self.check('---\n'
+                   '[123, abc, false, true]\n', conf)
+        self.check('---\n'
+                   '[123, false, abc, true]\n', conf,
+                   problem=(2, 14))
