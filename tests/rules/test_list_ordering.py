@@ -131,3 +131,17 @@ class ListOrderingTestCase(RuleTestCase):
                    '- hais\n'
                    '- haïr\n', conf,
                    problem=(3, 3))
+
+    def test_heterogeneous_items(self):
+        conf = 'list-ordering: enable'
+        self.check('---\n'
+                   '- 123\n'
+                   '- abc\n'
+                   '- false\n'
+                   '- true\n', conf)
+        self.check('---\n'
+                   '- 123\n'
+                   '- false\n'
+                   '- abc\n'
+                   '- true\n', conf,
+                   problem=(4, 3))
